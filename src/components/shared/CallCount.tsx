@@ -11,54 +11,32 @@ export interface Props {
 }
 
 export const CallCount: React.StatelessComponent<Props> = (props: Props) => {
-  let callGoal = 100;
-  if (props.totalCount >= 100) {
-    callGoal = 500;
-  }
-  if (props.totalCount >= 500) {
-    callGoal = 1000;
-  }
-  if (props.totalCount >= 1000) {
-    callGoal = 5000;
-  }
-  if (props.totalCount >= 5000) {
-    callGoal = 10000;
-  }
-  if (props.totalCount >= 10000) {
-    callGoal = 50000;
-  }
-  if (props.totalCount >= 50000) {
-    callGoal = 100000;
-  }
-  if (props.totalCount >= 100000) {
-    callGoal = 500000;
-  }
-  if (props.totalCount >= 500000) {
-    callGoal = 1000000;
-  }
-  if (props.totalCount >= 1000000) {
-    callGoal = 2000000;
-  }
-  if (props.totalCount >= 2000000) {
-    callGoal = 5000000;
+
+  const closestTenPower = Math.pow(10, Math.ceil(Math.log10(props.totalCount + 1)));
+
+  let callGoal = closestTenPower;
+  if (closestTenPower / 2 > (props.totalCount)) {
+    callGoal = Math.round(closestTenPower / 2);
   }
 
   const pctDone = (props.totalCount / callGoal) * 100;
-  const pctStyle = {width: `${pctDone}%`};    
+  const pctStyle = {width: `${pctDone - 2}%`};
+  const totalCalls = formatNumber(props.totalCount);
 
   const callText = props.minimal ?
-    `${formatNumber(props.totalCount)} Calls`
+    `${totalCalls} Calls`
     :
-    `Together we've made ${formatNumber(props.totalCount)} Calls!`;
+    `Together we've made ${totalCalls} Calls!`;
 
   return (
-    <div>
+    <div className="progress-block">
+      <div className="progress__label">{callText}</div>
       <div className="progress progress__large">
-        <p className="totaltext">{callText}</p>
+        <p className="totaltext">{totalCalls}</p>
         <span className="progress__border">&nbsp;</span>
-        <span className="progress__goal">{formatNumber(callGoal)}</span>
         <span style={pctStyle} className="progress__total" />
       </div>
+      <div className="progress__goal">Goal: {formatNumber(callGoal)}</div>
     </div>
   );
 };
